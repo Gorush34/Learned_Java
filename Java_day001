@@ -1,0 +1,374 @@
+package my.day17.c.collection;
+
+import java.util.*;
+
+/*
+	    == Array(배열) 와  Collection(자료구조)의 차이점은 ==     
+	    
+	    1. Array(배열)은 크기가 한정 되어져 있지만
+	       Collection(구조체)은 크기가 무한정 이다.
+	       
+	    2. Array(배열)은 배열에 선언되어진 동일한 타입의 데이터만 입력가능하지만  
+	       Collection(구조체)은 입력되어지는 데이터가 객체(Object)이기만 하면
+	             어떤것이든지 입력가능하다. ex) 10 -> auto boxing new int(10), "sdasfa" new Company ...
+
+
+	    ==== 배열(Array)과 자료구조(Collection)의 차이점 ====
+
+	 1. 배열(Array)은 오로지 동일한 데이터 타입만 들어가는 저장소이다.
+	           배열(Array)은 그 크기가 한번 정해지면 크기를 변경할 수 없다.!!!
+	     
+	 2. 자료구조(Collection)은 동일한 타입의 객체가 아니더라도
+	           객체타입이기만 하면 모두 들어가는 저장소이다.
+	           자료구조(Collection)은 저장되는 크기가 자동적으로 늘어난다.!!!
+	    
+	    웹에서 가장 많이 사용하는 대표적인 Collection 타입은 List 계열과 Map 계열이다.
+
+	-------------------------------------------------------------------------
+	              Web에서 주로 사용하는 클래스          게임프로그래밍에서 주로 사용하는 클래스
+	Interface       (Single Thread 방식)          (Multi Thread 방식)
+	-------------------------------------------------------------------------           
+	List 계열    --      ArrayList      ,         Vector
+	Map  계열    --      HashMap        ,         Hashtable 
+
+	  ArrayList 및 HashMap 은 Multi Thread를 지원안해주므로 가볍다.
+	  Vector 및 Hashtable 이 Multi Thread를 지원해주므로 무겁다.
+
+	  Multi Thread를 지원해주는냐 안해주느냐만 차이가 있을 뿐
+	       그 나머지 기능은 동일하다.  
+	*/
+
+	/*
+	  JDK 1.5 부터 제네릭(Generic)타입이 새로 추가되었는데, 제네릭(Generic)을 이용함으로써 잘못된 타입이
+	   사용될 수 있는 문제를 컴파일 과정에서 제거할 수 있게 되었다. 
+	   프로그램 실행시 타입 에러가 발생하여 작동이 멈추는 것보다는 컴파일시에 타입에러가 발생하도록 하여 
+	   프로그램 실행시 에러를 발생하지 않도록 사전에 방지하는 것이 좋기 때문이다.
+	   
+	     ▷ 제네릭(Generic)은 컬렉션(자료구조) 즉, 쉽게 말해서 객체들을 저장(수집)하는 구조적인 성격을 보강하기 위해 제공하는 것이다.
+	     ▷ 간단히 예를 들자면 컵이라는 특정 객체가 있다고 하자. 
+	      이 컵은 물만 담을 수 있는 물컵 , 또는 이 컵은 쥬스만 담을 수 있는 쥬스 컵. 이렇게 지정해주도록 하는 것이  제네릭(Generic) 이다.    
+
+	     ▷  JDK 1.5 부터 제네릭(Generic)타입이 새로 추가되면서, 특정 컬렉션(자료구조)에 저장되어질 특정한 객체 타입을 명시하여
+	     실행하기전 컴파일 단계에서 특정한 객체 타입이 아니면 에러를 발생토록 하여 저장이 불가능하도록 만들었다.
+	     즉, 특정 컬렉션(자료구조)에 저장되어질 객체의 타입을 제한하도록 만든 것이다.
+
+	    ▷   제네릭(Generic)타입을 사용하기 이전에는  컬렉션(자료구조)에 저장되어진 객체들을 하나씩 검출하여 객체 타입을 확인할 수 밖에 없었다.
+	  Object 로 부터 상속받은 객체는 모두 저장이 가능했던 이전의 버전들과는 달리 보다 체계적이라 할 수 있다.
+	  
+	    ▷ 제네릭(Generic)타입을 사용함으로써 별도의 형 변환(Casting)이 필요없이 <> 사이에 선언하였던 객체자료형으로 검출되어 편리하다.       
+
+	    ▷ 제네릭(Generic)타입에 있어서 1개 글자로 된 영문대문자는 영문대문자 아무것이나 사용해도 무관하다.
+	 -- 그런데 관습상 객체가 제네릭(Generic)타입으로 사용될때 자료형(Type)이라고 나타내고 싶을때는 <T>라고 쓰고,
+	        어떠한 요소(Element)이라고 나타내고 싶을때는 <E>라고 쓰고, 
+	    key값이라고 나타내고 싶을때는 <K>라고 쓰고, Value값이라고 나타내고 싶을때는 <V>라고 쓴다.      
+	    
+	*/	
+  
+  /*
+== ArrayList == 
+1. 출력시 저장된 순서대로 나온다.
+2. 중복된 데이터를 저장할 수 있다.
+3. 데이터를 읽어오는 속도는 ArrayList 가 LinkedList 보다 상대적으로 빠르다.
+4. 순차적으로 데이터를 추가/삭제하는 경우에는 ArrayList 가 LinkedList 보다 상대적으로 빠르다.
+5. 일반적인 데이터 추가/삭제는 데이터 중간 중간마다 발생하므로 이러한 경우에는 ArrayList 가 LinkedList 보다 상대적으로 느리다.
+6. 결과값은 ArrayList 를 사용하든지 LinkedList 를 사용하든지 동일한 결과값을 가진다.
+7. LinkedList 보다는 ArrayList 를 사용하도록 하자.
+*/
+
+
+public class ArrayList_main_2 {
+
+	public static void main(String[] args) {
+	
+		// 1. Member 클래스의 객체만을 저장할 수 있는 ArrayList 객체 mbrList 를 생성하시오.
+		
+		List<Member> mbrList = new ArrayList<>();
+		// ArrayList 가 implements List 이기 때문에 이렇게 써도 된다	
+		
+		// 2. Member 클래스의 객체 9개를 생성하여 mbrList 에 저장하세요.
+		mbrList.add(new Member("youjs","qwer1234$","유재석"));
+	    mbrList.add(new Member("eom","qwer1234$","엄정화"));
+	    mbrList.add(new Member("kanghd","qwer1234$","강호동"));
+	    mbrList.add(new Member("leess","qwer1234$","이순신"));
+	    mbrList.add(new Member("kimth","qwer1234$","김태희"));
+	    mbrList.add(new Member("kangkc","qwer1234$","강감찬"));
+	    
+	    mbrList.add(new Member());
+	    mbrList.add(new Member("leess","qwer1234$","이순신"));
+	    mbrList.add(new Member("leemh","qwer1234$","이민호"));
+	    
+
+	    
+	    // 3. mbrList 에 저장되어진 모든 회원들의 정보를 출력하도록 Member 클래스에 정의된 infoPrint() 메소드를 실행하세요.
+	    
+	    for(int i=0; i<mbrList.size(); i++) {
+	    	mbrList.get(i).infoPrint();
+	    } // end of for--------------------------
+	    
+	    // 또는
+	    
+	    System.out.println("\n~~~~~~~~~~~~~~~~ 또는 ~~~~~~~~~~~~~~~~~~~~\n");
+	    for(Member mbr : mbrList) { // mbrList 의 size만큼 반복
+	    	mbr.infoPrint();
+	    }
+	    
+	    System.out.println("\n~~~~~~~~~~~~~~~~ [퀴즈1] ~~~~~~~~~~~~~~~~~~~~\n");
+	    /*
+	      [퀴즈1]
+	      mbrList 에 저장되어진 Member 객체들 중에서 
+	      id값이 "leess" 인 회원만 그 회원의 정보를 출력하시오. 
+	     */
+	    boolean isFind = false;
+	    String id = "leess";
+	    
+	    for(int i=0; i<mbrList.size(); i++) {
+	    	if(id.equals(mbrList.get(i).getId()) ) {
+	    		mbrList.get(i).infoPrint();
+	    		isFind = true;
+	    	}
+	    } // end of for------------------
+	    
+	    if(!isFind) {
+	    	System.out.println(id + " 이라는 ID를 가진 회원은 없습니다.");
+	    }
+	    
+	    System.out.println("\n~~~~~~~~~~~~~~~~ 또는 ~~~~~~~~~~~~~~~~~~~~\n");
+	    
+	    isFind = false;
+	    
+	    for(Member mbr : mbrList) {
+	    	if(id.equals(mbr.getId())) {
+	    		mbr.infoPrint();
+	    		isFind = true;
+	    	}
+	    } // end of for--------------------
+	    
+	    System.out.println("\n~~~~~~~~~~~~~~~~ [퀴즈2] ~~~~~~~~~~~~~~~~~~~~\n");
+	    /*
+	      [퀴즈2]
+	      mbrList 에 저장되어진 Member 객체들 중에서 
+	      name 이 "이" 씨인 회원만 그 회원의 정보를 출력하세요.
+	     */
+	    isFind = false;
+	    String first_name = "이";
+	    
+	    for(int i=0; i<mbrList.size(); i++) {
+	    	if( mbrList.get(i).getName() != null && mbrList.get(i).getName().startsWith(first_name)) {
+	    		mbrList.get(i).infoPrint();
+	    		isFind = true;
+	    	}
+	    }
+	    
+	    if(!isFind) {
+	    	System.out.println(first_name + " 이라는 ID를 가진 회원은 없습니다.");
+	    }
+	    
+	    
+	    System.out.println("\n~~~~~~~~~~~~~~~~ 또는 ~~~~~~~~~~~~~~~~~~~~\n");
+	    
+	    isFind = false;
+	    first_name = "이";
+	    
+	    for(Member mbr : mbrList) {
+	    	if(mbr.getName() != null && mbr.getName().startsWith(first_name) ) {
+	    		mbr.infoPrint();
+	    		isFind = true;
+	    	}
+	    }
+	    
+	     if(!isFind) {
+	    	System.out.println(first_name + " 이라는 ID를 가진 회원은 없습니다.");
+	    }
+	    
+	    // *** ArrayList 타입인 mbrList 에 새로운 Member 객체 추가시 
+	    //     특정  index(위치)에 들어가도록 할 수 있다.
+	    System.out.println("\n ~~~ mbrList 에 새로운 Member 객체 추가하기 ~~~ "); 
+	     
+	   
+	    mbrList.add(new Member("seolh","qwer1234$","설현"));
+	    // index 값이 없으면 mbrList 의 맨 뒤에 추가된다.
+	    
+	    mbrList.add(3, new Member("chaew","qwer1234$","차은우"));
+	    //			3 이 특정 인덱스이다.
+	    // (0) 유재석 (1) 엄정화 (2) 강호동 (3) 이순신 으로 되어있었는데
+	    // (0) 유재석 (1) 엄정화 (2) 강호동 (3) 차은우 (4) 이순신 으로 되어진다.
+	    
+	    for( Member mbr : mbrList ) {
+	    	mbr.infoPrint();
+	    }
+	    
+	    // *** ArrayList 타입인 mbrList 에 저장되어진 Member 객체 삭제하기 *** 
+	    System.out.println("\n ~~~ ArrayList 타입인 mbrList 에 저장되어진 Member 객체 삭제하기 ~~~ ");
+	      
+	    System.out.println(">> 삭제하기 전 mbrList.size() => " + mbrList.size());
+	    // >> 삭제하기 전 mbrList.size() => 11
+	    
+	    mbrList.remove(3); // mbrList.remove(삭제할 Member 객체의 인덱스번호);
+	    
+	    System.out.println(">> 삭제한 다음 mbrList.size() => " + mbrList.size());
+	    // 삭제한 다음 mbrList.size() => 10
+	    
+	    for( Member mbr : mbrList ) {
+	    	mbr.infoPrint();
+	    }
+	    
+	    System.out.println("\n~~~~~~~~ [퀴즈3] ~~~~~~~~~~~~\n");
+	      /*
+	        [퀴즈3]
+	        mbrList 에 저장되어진 Member 객체들 중에서
+	        name 이  "이" 씨인 회원들은 삭제하고
+	          삭제한 후 mbrList 에 저장되어진 Member 객체들의 정보를 출력하세요
+	      */
+	    
+	    // >> 아래의 것은 틀린 풀이 !!! << //
+	    first_name = "이";
+	    
+	    /*
+	    
+	    System.out.println(">> (틀린풀이) 이씨삭제 전 mbrList.size() => " + mbrList.size());
+	    
+	    for(int i = 0; i<mbrList.size(); i++) {  // mbrList.size() => 10
+	    	
+	    	String name = mbrList.get(i).getName();
+	    	
+	    	if(name != null && name.startsWith(first_name)) {
+	    		// System.out.println("i => " + i); 0 1 2 3(이순신) 4(김태희) 5 7(이순신) 8(이민호) 9 
+	    		
+	    		mbrList.remove(i);	// i가 3을 삭제한 후 i++
+	    							// 0 1 2 3(김태희) 4 6(이순신) 7(이민호) 8
+						    		// i가 6을 삭제한 후 i++
+									// 0 1 2 3(김태희) 4 6(이민호) 7
+	    							// i가 7이 되어버려 mbrList.get(6)에 있는 "이민호"를 지울 수 없음
+	    							// 그러므로 "이민호"가 삭제되어지지 않고 남아 있음
+	    	}
+	    	
+	    } // end of for--------------------
+	    
+	    for( Member mbr : mbrList) {
+	    	mbr.infoPrint();
+	    }
+	    
+	    System.out.println(">> (틀린풀이) 이씨삭제 후 mbrList.size() => " + mbrList.size());
+	    */
+	 // >> 아래의 것은 맞는 풀이 !!! << //
+	    
+	    System.out.println(">> (맞는풀이) 이씨삭제 전 mbrList.size() => " + mbrList.size());
+	    
+	    first_name = "이";
+	    
+	    for( int i=mbrList.size()-1; i>=0; i--) {
+	    	
+	    	String name = mbrList.get(i).getName();
+	    	if(name != null && name.startsWith(first_name)) {
+	    		// System.out.println("i => " + i); 0 1 2 3(이순신) 4(김태희) 5 7(이순신) 8(이민호) 9 
+	    		mbrList.remove(i);			// 8(이민호) 를 삭제한 후 i--
+	    									// 0 1 2 3(이순신) 4 5 7(이순신) 8
+	    		
+	    									// 7(이순신) 을 삭제한 후 i--
+	    									// 0 1 2 3(이순신) 4 5 7
+	    		
+	    									// 3(이순신) 을 삭제한 후 i--
+	    									// 0 1 2 3 4 6
+	    		
+	    	}
+	    }
+	    
+	    System.out.println(">> (맞는풀이) 이씨삭제 후 mbrList.size() => " + mbrList.size());
+	    
+    	for( Member mbr : mbrList) {
+	    	mbr.infoPrint();
+	    }
+    	
+	    /* 내가한거(비효율적)
+	    for(int i=0; i<mbrList.size(); i++) {
+	    	if( mbrList.get(i).getName() != null && mbrList.get(i).getName().startsWith(first_name) ) {
+	    		mbrList.remove(i);
+	    		i--;
+	    	}	
+	    
+	    for( Member mbr : mbrList ) {
+	    	mbr.infoPrint();
+	    }
+	    */
+	    
+    	
+    	System.out.println("\n~~~~~~~~ [퀴즈4] ~~~~~~~~~~~~\n");
+        /*
+          [퀴즈4]
+          mbrList 에 저장되어진 Member 객체들 중에서
+           특정한 조건(id 가 null 인 것)에 만족하는 Member 객체를 하나를 삭제 /하고
+           / 삭제되어진 그 인덱스(위치)자리에 새로운 Member 객체 /를 넣어주기
+           그런데/ 만약에 id 가 null 인 것이 없다라면 새로운 Member 객체는 맨 뒤에 넣어주기
+        */   
+    	
+    	// new Member("seokj", "qWer1234$","서강준")
+    	
+    	boolean flag = false;
+    	
+    	for(int i=mbrList.size()-1; i>=0; i--) {
+    		
+    		String ID = mbrList.get(i).getId();
+    				
+    		if(ID == null) {
+    			mbrList.remove(i);
+    			flag = true;
+    			mbrList.add(i, new Member("seokj", "qWer1234$","서강준"));
+    			break;
+    		}
+    		
+    	} // end of for------------------------------------
+	     
+    	if(!flag) {
+    		mbrList.add(new Member("seokj", "qWer1234$","서강준"));
+    	}
+    	
+    	for(Member mbr : mbrList) {
+    		mbr.infoPrint();
+    	}
+    	
+    	
+    	System.out.println("\n ===== mbrList 에 저장된 모든 객체 삭제하기 ===== \n");
+    	mbrList.clear();
+    	// 전부 삭제
+    	
+    	System.out.println(">> 삭제 후 mbrList.size() => " + mbrList.size());
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+	} // end of main(String[] args)---------------------------- 
+
+}
+
+
+
+/*
+	== LinkedList == 
+	1. 출력시 저장된 순서대로 나온다.
+   2. 중복된 데이터를 저장할 수 있다.
+   3. 데이터를 읽어오는 속도는 LinkedList 가 ArrayList 보다 상대적으로 느리다.
+   4. 순차적으로 데이터를 추가/삭제하는 경우에는 LinkedList 가  ArrayList 보다 상대적으로 느리다.
+   5. 일반적인 데이터 추가/삭제는 데이터 중간 중간마다 발생하므로 이러한 경우에는 LinkedList 가 ArrayList 보다 상대적으로 빠르다.    
+   6. 결과값은 ArrayList 를 사용하든지 LinkedList 를 사용하든지 동일한 결과값을 가진다.
+   7. LinkedList 보다는 ArrayList 를 사용하도록 하자. 
+   => LinkedList 가 가지는 장점이 ArrayList 보다 적기 때문에 
+   == LinkedList (저장소) ==   
+   
+             유재석(자신의 메모리주소 1372)----(앞서존재하던객체의 메모리주소 1372)엄정화(자신의 메모리주소 3236)----(앞서존재하던객체의 메모리주소 3236)강호동(자신의 메모리주소 1034)----(앞서존재하던객체의 메모리주소 1034)이순신(자신의 메모리주소 2340)---(앞서존재하던객체의 메모리주소 2340)김태희(자신의 메모리주소 5236)   
+   
+   == 엄정화 를 삭제할 경우
+             유재석(자신의 메모리주소 1372)----(앞서존재하던객체의 메모리주소 1372)강호동(자신의 메모리주소 1034)----(앞서존재하던객체의 메모리주소 1034)이순신(자신의 메모리주소 2340)---(앞서존재하던객체의 메모리주소 2340)김태희(자신의 메모리주소 5236)
+       
+   == 엄정화 를 특정 위치에 추가할 경우
+             엄정화(자신의 메모리주소 7876)를 유재석 다음에 추가하고자 한다.
+             유재석(자신의 메모리주소 1372)----(앞서존재하던객체의 메모리주소 1372)엄정화(자신의 메모리주소 7876)----(앞서존재하던객체의 메모리주소 7876)강호동(자신의 메모리주소 1034)----(앞서존재하던객체의 메모리주소 1034)이순신(자신의 메모리주소 2340)---(앞서존재하던객체의 메모리주소 2340)김태희(자신의 메모리주소 5236)
+*/
